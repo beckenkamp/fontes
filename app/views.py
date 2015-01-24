@@ -1,20 +1,21 @@
 from flask import render_template, request, flash, redirect, url_for
 from app import app, db, lm
-from models import User
+from app.models import User
 from flask.ext.login import login_required, login_user, logout_user
-from forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, SourceForm
 from werkzeug.security import generate_password_hash
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-	return render_template("index.html", title="Fontes")
+    return render_template("index.html", title="Fontes")
 
 @app.route('/source', methods=['GET', 'POST'])
 @login_required
 def source():
-	return ''
+    form = SourceForm()
+    return render_template("source.html", title="Nova Fonte", form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -47,12 +48,12 @@ def logout():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-	form = RegisterForm()
-	if request.method == 'POST' and form.validate_on_submit():
-		username = request.form['username']
-		password = request.form['password']
-		user = User(username, password)	
-		db.session.add(user)
-		db.session.commit()
-		flash('Usuario %s criado' % user.username)
-	return render_template('register.html', title="Novo Usuario", form=form)
+    form = RegisterForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        username = request.form['username']
+        password = request.form['password']
+        user = User(username, password)	
+        db.session.add(user)
+        db.session.commit()
+        flash('Usuario %s criado' % user.username)
+    return render_template('register.html', title="Novo Usuario", form=form)

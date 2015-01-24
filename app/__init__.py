@@ -14,4 +14,4 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
 
-import views
+from app import views

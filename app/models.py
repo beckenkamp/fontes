@@ -7,12 +7,14 @@ class Base(db.Model):
     __abstract__  = True
 
     id            = db.Column(db.Integer, primary_key=True)
-    date_created  = db.Column(db.DateTime,  default=db.func.current_timestamp())
-    date_modified = db.Column(db.DateTime,  default=db.func.current_timestamp(),
-                                           onupdate=db.func.current_timestamp())
+    date_created  = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 
 class User(Base):
+
+    __tablename__ = "user"
+
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80), unique=True)
 
@@ -46,8 +48,11 @@ class User(Base):
 
 
 class Source(Base):
-	name = db.Column(db.String(200))
-    specialty = db.Column(db.String(200)) #Área de especialidade
+
+    __tablename__ = "source"
+
+    name = db.Column(db.String(200))
+    specialty = db.Column(db.String(200)) #area de especialidade
     time_experience = db.Column(db.String(80)) #Tempo de experiência
     proof = db.Column(db.String(500)) #Comprovação - o que faz ser uma boa fonte (ex. coordenador das aulas da única academia em SP especializada em reabilitação de paratletas)
     interview_type = db.Column(db.String(500)) #Como aceita falar (fone, email, pessoalmente, gravação)
@@ -67,4 +72,4 @@ class Source(Base):
         return '<User %r>' % self.name
 
 
-#db.create_all()
+db.create_all()

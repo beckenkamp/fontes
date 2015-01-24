@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+<h1>{{ title }}</h1>
+<form action="" method="post" name="source">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ render_field(form.name) }}<br>
+        {{ render_field(form.specialty) }}<br>
+        {{ render_field(form.time_experience) }}<br>
+        {{ render_field(form.proof) }}<br>
+        {{ render_field(form.interview_type) }}<br>
+        {{ render_field(form.media_type) }}<br>
+        {{ render_field(form.contacts) }}<br>
+    </p>
+    <p><input type="submit" value="Criar"></p>
+</form>
+{% endblock %}
