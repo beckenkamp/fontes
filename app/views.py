@@ -1,6 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for
 from app import app, db, lm
-from app.models import User
+from app.models import User, Source
 from flask.ext.login import login_required, login_user, logout_user
 from app.forms import LoginForm, RegisterForm, SourceForm
 from werkzeug.security import generate_password_hash
@@ -9,22 +9,36 @@ from werkzeug.security import generate_password_hash
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template("index.html", title="Fontes")
+    sources = Source.query.all()
+    return render_template("index.html", title=u"Fontes", sources=sources)
 
 @app.route('/source', methods=['GET', 'POST'])
 @login_required
 def source():
     form = SourceForm()
-    return render_template("source.html", title="Nova Fonte", form=form)
+    if form.validate_on_submit():
+        name = form.name.data
+        specialty = form.specialty.data
+        time_experience = form.time_experience.data
+        proof = form.proof.data
+        interview_type = form.interview_type.data
+        media_type = form.media_type.data
+        contacts = form.contacts.data
+        source = Source(name, specialty, time_experience, proof, interview_type, media_type, contacts)
+        db.session.add(source)
+        db.session.commit()
+        flash(u'Fonte %s adicionada com sucesso!' % source.name)
+        return redirect(url_for('source'))
+    return render_template("source.html", title=u"Nova Fonte", form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return 'Sorry, Nothing found here.', 404
+    return u'Ops, nada encontrado aqui.', 404
 
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return 'Sorry, internal server error: {}'.format(e), 500
+    return u'Vish, erro interno do servidor: {}'.format(e), 500
 
 @lm.user_loader
 def load_user(userid):
@@ -36,17 +50,18 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first_or_404()
         login_user(user)
-        flash("Logged in successfully.")
+        flash(u"Bem-vindo, %s" % user.username)
         return redirect(request.args.get("next") or url_for("index"))
-    return render_template("login.html", title="Entrar", form=form)
+    return render_template("login.html", title=u"Entrar", form=form)
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("login"))
 
 @app.route("/register", methods=["GET", "POST"])
+@login_required
 def register():
     form = RegisterForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -55,5 +70,5 @@ def register():
         user = User(username, password)	
         db.session.add(user)
         db.session.commit()
-        flash('Usuario %s criado' % user.username)
-    return render_template('register.html', title="Novo Usuario", form=form)
+        flash(u'Usuário %s criado' % user.username)
+    return render_template('register.html', title=u"Novo Usuário", form=form)

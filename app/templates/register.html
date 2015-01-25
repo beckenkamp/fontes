@@ -2,14 +2,21 @@
 
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
-<h1>{{ title }}</h1>
-<form action="" method="post" name="register">
-	{{ form.hidden_tag() }}
-	<p>
-		{{ render_field(form.username) }}<br>
-		{{ render_field(form.password) }}<br>
-		{{ render_field(form.confirm) }}<br>
-	</p>
-	<p><input type="submit" value="Criar"></p>
-</form>
+
+<div class="well bs-component">
+    <form action="" method="post" name="register" class="form-horizontal">
+    	{{ form.hidden_tag() }}
+        <fieldset>
+            <legend>{{ title }}</legend>
+    		{{ render_field(form.username) }}
+    		{{ render_field(form.password) }}
+    		{{ render_field(form.confirm) }}
+        <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button type="submit" class="btn btn-primary">Criar</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
 {% endblock %}

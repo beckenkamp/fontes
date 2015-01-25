@@ -20,12 +20,12 @@
         {% set placeholder = field.label.text %}
     {% endif %}
     <div class="form-group {% if field.errors %}error{% endif %}">
-        {% if with_label %}
-            <label for="{{ field.id }}">
-                {{ field.label.text }}{% if field.flags.required %} *{% endif %}:
+        {# {% if with_label %} #}
+            <label for="{{ field.id }}" class="col-lg-2 control-label">
+                {{ field.label.text }}{% if field.flags.required %} *{% endif %}
             </label>
-        {% endif %}
-        <div class="controls">
+        {# {% endif %} #}
+        <div class="col-lg-10">
             {% set class_ = kwargs.pop('class_', '') %}
             {% if field.flags.required %}
                 {% set class_ = class_ + ' required' %}
