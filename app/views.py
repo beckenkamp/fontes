@@ -13,10 +13,20 @@ def index():
     return render_template("index.html", title=u"Fontes", sources=sources)
 
 @app.route('/source', methods=['GET', 'POST'])
+@app.route('/source/<int:id>', methods=['GET', 'POST'])
 @login_required
-def source():
-    form = SourceForm()
-    if form.validate_on_submit():
+def source(id = None):
+    if id:
+        source = Source.query.filter_by(id=id).first_or_404()
+        form = SourceForm(obj=source)
+        title = u"Editar Fonte %s" % source.name
+        btn_label = u"Editar"
+    else:
+        form = SourceForm()
+        title = u"Nova Fonte"
+        btn_label = u"Criar"
+
+    if form.validate_on_submit() and id == None:
         name = form.name.data
         specialty = form.specialty.data
         time_experience = form.time_experience.data
@@ -29,7 +39,33 @@ def source():
         db.session.commit()
         flash(u'Fonte %s adicionada com sucesso!' % source.name)
         return redirect(url_for('source'))
-    return render_template("source.html", title=u"Nova Fonte", form=form)
+
+    if form.validate_on_submit() and id != None:
+        source.name = form.name.data
+        source.specialty = form.specialty.data
+        source.time_experience = form.time_experience.data
+        source.proof = form.proof.data
+        source.interview_type = form.interview_type.data
+        source.media_type = form.media_type.data
+        source.contacts = form.contacts.data
+        #source = Source(name, specialty, time_experience, proof, interview_type, media_type, contacts)
+        #db.session.add(source)
+        db.session.commit()
+        flash(u'Fonte %s alterada com sucesso!' % source.name)
+        return redirect(url_for('index'))
+
+    return render_template("source.html", title=title, form=form, btn_label=btn_label)
+
+@app.route('/source/delete/<int:id>', methods=['GET'])
+@login_required
+def delete_source(id):
+    if id:
+        source = Source.query.filter_by(id=id).first_or_404()
+        db.session.delete(source)
+        db.session.commit()
+        flash(u'Fonte %s removida da base de dados' % source.name)
+        return redirect(url_for('index'))
+
 
 @app.errorhandler(404)
 def page_not_found(e):
